@@ -50,6 +50,19 @@ function EditTaskModal({
     setSubtaskInput('');
   };
 
+  const timeButton = (field: DateTimeField, value: number | null, label: string) => (
+    <TouchableOpacity
+      style={styles.timeLink}
+      onPress={() => onPickDateTime(field, value, 'time')}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+    >
+      <Ionicons name="time-outline" size={17} color={theme.primary} />
+      <Text style={styles.timeLinkText}>Change time</Text>
+      <Ionicons name="chevron-forward" size={17} color={theme.primary} />
+    </TouchableOpacity>
+  );
+
   return (
     <Sheet title={isNew ? 'New task' : 'Edit task'} onClose={onClose} theme={theme} styles={styles}>
       {(close) => (
@@ -61,7 +74,6 @@ function EditTaskModal({
             onChangeText={(text) => updateDraft((prev) => ({ ...prev, text }))}
             placeholder="What needs sorting?"
             placeholderTextColor={theme.textMuted}
-            autoFocus
           />
           <Text style={[styles.fieldLabel, styles.spacedLabel]}>Notes</Text>
           <TextInput
@@ -154,27 +166,28 @@ function EditTaskModal({
               onPress={() => onPickDateTime('startAt', draft.startAt, 'date')}
             >
               <Ionicons name="play-circle-outline" size={18} color={theme.success} />
-              <View>
+              <View style={styles.dateFieldCopy}>
                 <Text style={styles.dateFieldLabel}>Start</Text>
-                <Text style={[styles.dateFieldValue, !draft.startAt && styles.dateFieldEmpty]}>
+                <Text
+                  style={[styles.dateFieldValue, !draft.startAt && styles.dateFieldEmpty]}
+                  numberOfLines={2}
+                >
                   {draft.startAt ? formatDateTime(draft.startAt) : 'Set a start time'}
                 </Text>
               </View>
             </TouchableOpacity>
             {!!draft.startAt && (
-              <TouchableOpacity onPress={() => onClearDateTime('startAt')}>
-                <Ionicons name="close-circle-outline" size={18} color={theme.textMuted} />
+              <TouchableOpacity
+                style={styles.dateClearBtn}
+                onPress={() => onClearDateTime('startAt')}
+                accessibilityRole="button"
+                accessibilityLabel="Clear start time"
+              >
+                <Ionicons name="close-circle-outline" size={19} color={theme.textMuted} />
               </TouchableOpacity>
             )}
           </View>
-          {!!draft.startAt && (
-            <TouchableOpacity
-              style={styles.timeLink}
-              onPress={() => onPickDateTime('startAt', draft.startAt, 'time')}
-            >
-              <Text style={styles.timeLinkText}>Change time</Text>
-            </TouchableOpacity>
-          )}
+          {!!draft.startAt && timeButton('startAt', draft.startAt, 'Change start time')}
 
           <View style={styles.dateField}>
             <TouchableOpacity
@@ -182,27 +195,30 @@ function EditTaskModal({
               onPress={() => onPickDateTime('dueAt', draft.dueAt, 'date')}
             >
               <Ionicons name="calendar-outline" size={18} color={theme.primary} />
-              <View>
+              <View style={styles.dateFieldCopy}>
                 <Text style={styles.dateFieldLabel}>Due / end</Text>
-                <Text style={[styles.dateFieldValue, !draft.dueAt && styles.dateFieldEmpty]}>
+                <Text
+                  style={[styles.dateFieldValue, !draft.dueAt && styles.dateFieldEmpty]}
+                  numberOfLines={2}
+                >
                   {draft.dueAt ? formatDateTime(draft.dueAt) : 'Set a deadline'}
                 </Text>
               </View>
             </TouchableOpacity>
             {!!draft.dueAt && (
-              <TouchableOpacity onPress={() => onClearDateTime('dueAt')}>
-                <Ionicons name="close-circle-outline" size={18} color={theme.textMuted} />
+              <TouchableOpacity
+                style={styles.dateClearBtn}
+                onPress={() => onClearDateTime('dueAt')}
+                accessibilityRole="button"
+                accessibilityLabel="Clear due time"
+              >
+                <Ionicons name="close-circle-outline" size={19} color={theme.textMuted} />
               </TouchableOpacity>
             )}
           </View>
           {!!draft.dueAt && (
             <>
-              <TouchableOpacity
-                style={styles.timeLink}
-                onPress={() => onPickDateTime('dueAt', draft.dueAt, 'time')}
-              >
-                <Text style={styles.timeLinkText}>Change time</Text>
-              </TouchableOpacity>
+              {timeButton('dueAt', draft.dueAt, 'Change due time')}
               <Text style={[styles.fieldLabel, styles.spacedLabel]}>Wrap-up nudge before due</Text>
               <View style={styles.optionRow}>
                 {PRE_DUE_OPTIONS.map((minutes) => (

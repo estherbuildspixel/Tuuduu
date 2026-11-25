@@ -82,7 +82,13 @@ function ProgressCard({
         <View style={styles.progressFooter}>
           <Text style={styles.progressHint}>{hint}</Text>
           {completed > 0 && (
-            <TouchableOpacity onPress={onClear} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
+            <TouchableOpacity
+              style={styles.clearTextBtn}
+              onPress={onClear}
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+              accessibilityRole="button"
+              accessibilityLabel="Clear completed tasks"
+            >
               <Text style={styles.clearText}>Clean done</Text>
             </TouchableOpacity>
           )}

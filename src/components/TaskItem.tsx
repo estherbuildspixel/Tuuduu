@@ -131,7 +131,7 @@ function TaskItem({
           <TouchableOpacity
             style={[styles.actionBtn, focusActive && styles.actionBtnActive]}
             onPress={() => onFocus(task)}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}
           >
             <Ionicons
               name={focusActive ? 'pause-outline' : 'play-outline'}
@@ -142,14 +142,14 @@ function TaskItem({
           <TouchableOpacity
             style={styles.actionBtn}
             onPress={() => onEdit(task)}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}
           >
             <Ionicons name="pencil-outline" size={17} color={theme.textMuted} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionBtn}
             onPress={() => onDelete(task.id)}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}
           >
             <Ionicons name="trash-outline" size={17} color={theme.danger} />
           </TouchableOpacity>

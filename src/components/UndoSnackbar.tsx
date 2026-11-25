@@ -35,10 +35,22 @@ function UndoSnackbar({ task, styles, theme, onUndo, onClose }: UndoSnackbarProp
         <Ionicons name="trash-outline" size={15} color="#FFFFFF" />
       </View>
       <Text style={styles.snackbarText} numberOfLines={1}>{`Deleted ${task.text}`}</Text>
-      <TouchableOpacity onPress={onUndo} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+      <TouchableOpacity
+        style={styles.snackbarActionBtn}
+        onPress={onUndo}
+        hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+        accessibilityRole="button"
+        accessibilityLabel="Undo delete"
+      >
         <Text style={styles.snackbarAction}>UNDO</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={onClose} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+      <TouchableOpacity
+        style={styles.snackbarActionBtn}
+        onPress={onClose}
+        hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+        accessibilityRole="button"
+        accessibilityLabel="Dismiss"
+      >
         <Ionicons name="close-outline" size={16} color={theme.textMuted} />
       </TouchableOpacity>
     </Animated.View>

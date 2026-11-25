@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  useWindowDimensions,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -99,6 +100,59 @@ export default function OnboardingFlow({ theme, onFinish }: OnboardingFlowProps)
   const accent = accentFor(theme, slide.accent);
   const isLast = page === SLIDES.length - 1;
   const styles = useMemo(() => makeStyles(theme), [theme]);
+  const { width, height } = useWindowDimensions();
+  const compact = width < 360 || height < 700;
+  const viewStyles = useMemo(
+    () => ({
+      ...styles,
+      scrollContent: {
+        ...styles.scrollContent,
+        paddingHorizontal: compact ? 14 : 20,
+        paddingVertical: compact ? 8 : 12,
+      },
+      card: {
+        ...styles.card,
+        paddingHorizontal: compact ? 16 : 22,
+        paddingVertical: compact ? 16 : 24,
+      },
+      scene: {
+        ...styles.scene,
+        height: compact ? 150 : 188,
+        marginBottom: compact ? 10 : 18,
+      },
+      sceneOrb: {
+        ...styles.sceneOrb,
+        width: compact ? 150 : 180,
+        height: compact ? 150 : 180,
+      },
+      sceneOrbWide: {
+        ...styles.sceneOrbWide,
+        width: compact ? 174 : 210,
+        height: compact ? 130 : 160,
+      },
+      floatStack: { ...styles.floatStack, width: compact ? '86%' : '82%' },
+      timeline: { ...styles.timeline, width: compact ? '84%' : '78%' },
+      progressOrb: {
+        ...styles.progressOrb,
+        width: compact ? 122 : 142,
+        height: compact ? 122 : 142,
+        borderWidth: compact ? 7 : 9,
+      },
+      focusBubble: {
+        ...styles.focusBubble,
+        width: compact ? 78 : 92,
+        height: compact ? 78 : 92,
+        borderRadius: compact ? 39 : 46,
+      },
+      title: {
+        ...styles.title,
+        fontSize: compact ? 23 : 26,
+        lineHeight: compact ? 28 : 31,
+      },
+      footer: { ...styles.footer, paddingHorizontal: compact ? 14 : 20 },
+    }) as ReturnType<typeof makeStyles>,
+    [compact, styles]
+  );
 
   useEffect(() => {
     opacity.setValue(0);
@@ -185,17 +239,23 @@ export default function OnboardingFlow({ theme, onFinish }: OnboardingFlowProps)
             </View>
             <Text style={styles.brandName}>Tuuduu</Text>
           </View>
-          <TouchableOpacity onPress={onFinish} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+          <TouchableOpacity
+            style={styles.skipButton}
+            onPress={onFinish}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            accessibilityRole="button"
+            accessibilityLabel="Skip onboarding"
+          >
             <Text style={styles.skipText}>Skip</Text>
           </TouchableOpacity>
         </View>
 
         <ScrollView
-          style={styles.scroll}
-          contentContainerStyle={styles.scrollContent}
+          style={viewStyles.scroll}
+          contentContainerStyle={viewStyles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <Animated.View style={[styles.card, { opacity, transform: [{ translateY }] }]}>
+          <Animated.View style={[viewStyles.card, { opacity, transform: [{ translateY }] }]}>
             <View style={styles.cardTop}>
               <View style={[styles.stepPill, { backgroundColor: `${accent}1F` }]}>
                 <Text style={[styles.stepPillText, { color: accent }]}>STEP {slide.step}</Text>
@@ -206,13 +266,13 @@ export default function OnboardingFlow({ theme, onFinish }: OnboardingFlowProps)
             <HeroScene
               page={page}
               theme={theme}
-              styles={styles}
+              styles={viewStyles}
               accent={accent}
               float={float}
               pulse={pulse}
             />
 
-            <Text style={styles.title}>{slide.title}</Text>
+            <Text style={viewStyles.title}>{slide.title}</Text>
             <Text style={styles.body}>{slide.body}</Text>
 
             <View style={styles.steps}>
@@ -233,7 +293,7 @@ export default function OnboardingFlow({ theme, onFinish }: OnboardingFlowProps)
           </Animated.View>
         </ScrollView>
 
-        <View style={styles.footer}>
+        <View style={viewStyles.footer}>
           <View style={styles.progressCopy}>
             <Text style={styles.progressLabel}>STEP {page + 1} OF {SLIDES.length}</Text>
             <Text style={styles.progressDots}>
@@ -439,6 +499,13 @@ function makeStyles(theme: ThemePalette) {
       fontSize: 16,
       fontWeight: '800',
       color: theme.text,
+    },
+    skipButton: {
+      minWidth: 44,
+      minHeight: 44,
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     skipText: {
       fontSize: 13,
@@ -788,6 +855,7 @@ function makeStyles(theme: ThemePalette) {
       marginTop: 18,
     },
     tagText: {
+      flexShrink: 1,
       fontSize: 11,
       fontWeight: '800',
     },
@@ -834,6 +902,7 @@ function makeStyles(theme: ThemePalette) {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 3,
+      minHeight: 48,
       paddingVertical: 13,
       paddingHorizontal: 14,
       borderRadius: 13,
@@ -850,6 +919,7 @@ function makeStyles(theme: ThemePalette) {
       justifyContent: 'center',
       alignItems: 'center',
       gap: 7,
+      minHeight: 48,
       paddingVertical: 14,
       borderRadius: 13,
       shadowColor: theme.shadow,

@@ -20,6 +20,7 @@ import { useClock } from '@/hooks/useClock';
 import { taskCheckedHaptic, taskDeletedHaptic } from '@/services/haptics';
 import {
   addNotificationResponseListener,
+  cancelAllTaskReminders,
   cancelTaskReminders,
   configureNotifications,
   ensureNotificationPermission,
@@ -156,6 +157,7 @@ export interface UseTasksResult {
   resetData: () => void;
   finishOnboarding: () => void;
   openOnboarding: () => void;
+  resetOnboardingForDev: () => void;
   startFocus: (task: Task) => void;
   toggleFocusPause: () => void;
   stopFocus: () => void;
@@ -183,6 +185,7 @@ export function useTasks(): UseTasksResult {
   const [showStats, setShowStats] = useState(false);
   const [undo, setUndo] = useState<UndoState | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [isFirstLaunchOnboarding, setIsFirstLaunchOnboarding] = useState(false);
 
   const undoTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reminderSignatures = useRef<Record<string, string>>({});
@@ -213,14 +216,16 @@ export function useTasks(): UseTasksResult {
         setSettings(parseSettings(storedSettings));
         setFocus(parseFocus(storedFocus));
         setShowOnboarding(storedOnboarding !== 'done');
+        setIsFirstLaunchOnboarding(storedOnboarding !== 'done');
         if (storedTasks === null) {
-          await AsyncStorage.setItem(STORAGE_KEYS.tasks, JSON.stringify(loadedTasks));
+          void AsyncStorage.setItem(STORAGE_KEYS.tasks, JSON.stringify(loadedTasks)).catch(() => {});
         }
       } catch {
         if (!active) return;
         setTasks(INITIAL_TASKS.map(normalizeTask));
         setSettings(DEFAULT_SETTINGS);
         setShowOnboarding(true);
+        setIsFirstLaunchOnboarding(true);
       } finally {
         if (active) setIsLoaded(true);
       }
@@ -505,6 +510,7 @@ export function useTasks(): UseTasksResult {
 
   const enableReminders = useCallback(async () => {
     if (settings.remindersEnabled) {
+      await cancelAllTaskReminders(tasks);
       setSettings((prev) => ({ ...prev, remindersEnabled: false }));
       return;
     }
@@ -512,7 +518,7 @@ export function useTasks(): UseTasksResult {
     if (!granted) return;
     reminderSignatures.current = {};
     setSettings((prev) => ({ ...prev, remindersEnabled: true }));
-  }, [settings.remindersEnabled]);
+  }, [settings.remindersEnabled, tasks]);
 
   const resetData = useCallback(() => {
     tasks.forEach((task) => {
@@ -524,13 +530,33 @@ export function useTasks(): UseTasksResult {
   }, [tasks]);
 
   const finishOnboarding = useCallback(() => {
-    setShowOnboarding(false);
-    void AsyncStorage.setItem(STORAGE_KEYS.onboarding, 'done').catch(() => {});
-  }, []);
+    if (!isFirstLaunchOnboarding) {
+      setShowOnboarding(false);
+      return;
+    }
+    void AsyncStorage.setItem(STORAGE_KEYS.onboarding, 'done')
+      .catch(() => {})
+      .finally(() => {
+        setIsFirstLaunchOnboarding(false);
+        setShowOnboarding(false);
+      });
+  }, [isFirstLaunchOnboarding]);
 
   const openOnboarding = useCallback(() => {
     setShowSettings(false);
+    setIsFirstLaunchOnboarding(false);
     setShowOnboarding(true);
+  }, []);
+
+  const resetOnboardingForDev = useCallback(() => {
+    if (!__DEV__) return;
+    setShowSettings(false);
+    void AsyncStorage.removeItem(STORAGE_KEYS.onboarding)
+      .catch(() => {})
+      .finally(() => {
+        setIsFirstLaunchOnboarding(true);
+        setShowOnboarding(true);
+      });
   }, []);
 
   const toggleFocusPause = useCallback(() => {
@@ -613,6 +639,7 @@ export function useTasks(): UseTasksResult {
     resetData,
     finishOnboarding,
     openOnboarding,
+    resetOnboardingForDev,
     startFocus,
     toggleFocusPause,
     stopFocus,

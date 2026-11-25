@@ -21,6 +21,10 @@ function Toggle({ value, onPress, theme, styles }: ToggleButtonProps) {
     <TouchableOpacity
       onPress={onPress}
       style={[styles.switchTrack, value && { backgroundColor: theme.primary }]}
+      hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+      accessibilityRole="switch"
+      accessibilityState={{ checked: value }}
+      accessibilityLabel="Toggle setting"
     >
       <View style={[styles.switchKnob, value && styles.switchKnobOn]} />
     </TouchableOpacity>

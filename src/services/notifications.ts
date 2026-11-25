@@ -3,6 +3,7 @@ import {
   addNotificationResponseReceivedListener,
   AndroidImportance,
   cancelScheduledNotificationAsync,
+  getAllScheduledNotificationsAsync,
   getExactAlarmPermissionsAsync,
   getPermissionsAsync,
   requestExactAlarmPermissionsAsync,
@@ -20,6 +21,7 @@ import type { Task } from '@/types/task';
 
 const CHANNEL_ID = 'tuuduu-reminders';
 const CATEGORY_ID = 'tuuduu_task';
+const REGULAR_REMINDER_KINDS = ['start', 'preDue', 'due'] as const;
 
 const identifierFor = (taskId: string, kind: string): string => `tuuduu-${taskId}-${kind}`;
 
@@ -100,13 +102,39 @@ export async function requestExactAlarms(): Promise<void> {
   }
 }
 
+async function scheduledSnoozeIdentifiers(taskId: string): Promise<string[]> {
+  try {
+    const scheduled = await getAllScheduledNotificationsAsync();
+    const snoozePrefix = `${identifierFor(taskId, 'snooze')}-`;
+    return scheduled
+      .filter(({ identifier, content }) => {
+        const data = content.data;
+        return (
+          (data?.taskId === taskId && data?.kind === 'snooze') ||
+          identifier.startsWith(snoozePrefix)
+        );
+      })
+      .map(({ identifier }) => identifier);
+  } catch {
+    return [];
+  }
+}
+
 export async function cancelTaskReminders(task: Pick<Task, 'id'>): Promise<void> {
-  const kinds = ['start', 'preDue', 'due'];
+  const snoozeIdentifiers = await scheduledSnoozeIdentifiers(task.id);
+  const identifiers = [
+    ...REGULAR_REMINDER_KINDS.map((kind) => identifierFor(task.id, kind)),
+    ...snoozeIdentifiers,
+  ];
   await Promise.all(
-    kinds.map((kind) =>
-      cancelScheduledNotificationAsync(identifierFor(task.id, kind)).catch(() => {})
+    [...new Set(identifiers)].map((identifier) =>
+      cancelScheduledNotificationAsync(identifier).catch(() => {})
     )
   );
+}
+
+export async function cancelAllTaskReminders(tasks: readonly Pick<Task, 'id'>[]): Promise<void> {
+  await Promise.all(tasks.map((task) => cancelTaskReminders(task)));
 }
 
 async function buildTrigger(at: number, exact: boolean): Promise<DateTriggerInput> {

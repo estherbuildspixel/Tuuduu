@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
-import { Alert, FlatList, KeyboardAvoidingView, Platform, StatusBar } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Alert, FlatList, KeyboardAvoidingView, StatusBar } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 import DateTimeSheet from '@/components/DateTimeSheet';
 import EditTaskModal from '@/components/EditTaskModal';
@@ -72,6 +72,7 @@ function TuuduuApp() {
     resetData,
     finishOnboarding,
     openOnboarding,
+    resetOnboardingForDev,
     startFocus,
     toggleFocusPause,
     stopFocus,
@@ -119,22 +120,17 @@ function TuuduuApp() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle={scheme === 'dark' ? 'light-content' : 'dark-content'} />
-      <KeyboardAvoidingView
-        style={styles.keyboard}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
+      <KeyboardAvoidingView style={styles.keyboard} behavior="padding">
         <Header
           searchOpen={searchOpen}
           query={query}
           dateLabel={dateLabel}
           scheme={scheme}
-          completedCount={stats.completed}
           theme={theme}
           styles={styles}
           onQueryChange={setQuery}
           onOpenSearch={() => setSearchOpen(true)}
           onCloseSearch={closeSearch}
-          onClearCompleted={confirmClearCompleted}
           onOpenSettings={() => setShowSettings(true)}
           onToggleScheme={toggleScheme}
         />
@@ -243,6 +239,7 @@ function TuuduuApp() {
             setSettings={setSettings}
             onEnableReminders={() => void enableReminders()}
             onOpenOnboarding={openOnboarding}
+            onResetOnboardingForDev={resetOnboardingForDev}
             onResetData={confirmResetData}
             onClose={() => setShowSettings(false)}
             theme={theme}
@@ -270,7 +267,9 @@ function TuuduuApp() {
 export default function App() {
   return (
     <ErrorBoundary>
-      <TuuduuApp />
+      <SafeAreaProvider>
+        <TuuduuApp />
+      </SafeAreaProvider>
     </ErrorBoundary>
   );
 }

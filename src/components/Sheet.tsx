@@ -1,5 +1,15 @@
 import React, { memo, useCallback, useEffect, useState, type ReactNode } from 'react';
-import { Animated, Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Animated,
+  KeyboardAvoidingView,
+  Modal,
+  Pressable,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 import type { AppStyles, ThemePalette } from '@/constants/theme';
@@ -50,25 +60,30 @@ function Sheet({ title, onClose, theme, styles, children }: SheetProps) {
           accessibilityLabel={title}
           accessibilityViewIsModal
         >
-          <View style={styles.sheetHandle} />
-          <View style={styles.sheetHeader}>
-            <Text style={styles.sheetTitle}>{title}</Text>
-            <TouchableOpacity
-              onPress={close}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              accessibilityRole="button"
-              accessibilityLabel="Close sheet"
-            >
-              <Ionicons name="close-outline" size={22} color={theme.textMuted} />
-            </TouchableOpacity>
-          </View>
-          <ScrollView
-            style={styles.sheetScroll}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            {typeof children === 'function' ? children(close) : children}
-          </ScrollView>
+          <SafeAreaView style={styles.sheetSafeArea} edges={['bottom']}>
+            <View style={styles.sheetHandle} />
+            <View style={styles.sheetHeader}>
+              <Text style={styles.sheetTitle}>{title}</Text>
+              <TouchableOpacity
+                style={styles.sheetCloseBtn}
+                onPress={close}
+                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                accessibilityRole="button"
+                accessibilityLabel="Close sheet"
+              >
+                <Ionicons name="close-outline" size={22} color={theme.textMuted} />
+              </TouchableOpacity>
+            </View>
+            <KeyboardAvoidingView style={styles.sheetKeyboard} behavior="padding">
+              <ScrollView
+                style={styles.sheetScroll}
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+              >
+                {typeof children === 'function' ? children(close) : children}
+              </ScrollView>
+            </KeyboardAvoidingView>
+          </SafeAreaView>
         </Animated.View>
       </Animated.View>
     </Modal>

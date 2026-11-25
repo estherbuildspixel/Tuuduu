@@ -17,6 +17,7 @@ interface SettingsSheetProps {
   setSettings: React.Dispatch<React.SetStateAction<AppSettings>>;
   onEnableReminders: () => void;
   onOpenOnboarding: () => void;
+  onResetOnboardingForDev?: () => void;
   onResetData: () => void;
   onClose: () => void;
   theme: ThemePalette;
@@ -28,6 +29,7 @@ function SettingsSheet({
   setSettings,
   onEnableReminders,
   onOpenOnboarding,
+  onResetOnboardingForDev,
   onResetData,
   onClose,
   theme,
@@ -82,6 +84,19 @@ function SettingsSheet({
             </View>
             <Ionicons name="chevron-forward" size={17} color={theme.textMuted} />
           </TouchableOpacity>
+
+          {__DEV__ && !!onResetOnboardingForDev && (
+            <TouchableOpacity style={styles.settingRow} onPress={onResetOnboardingForDev}>
+              <View style={[styles.settingIcon, { backgroundColor: `${theme.warning}1F` }]}>
+                <Ionicons name="refresh-outline" size={19} color={theme.warning} />
+              </View>
+              <View style={styles.settingCopy}>
+                <Text style={styles.settingTitle}>Preview onboarding (dev)</Text>
+                <Text style={styles.settingSubtitle}>Clears only the onboarding flag</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={17} color={theme.textMuted} />
+            </TouchableOpacity>
+          )}
 
           <OptionSelector
             label="Default wrap-up nudge"
