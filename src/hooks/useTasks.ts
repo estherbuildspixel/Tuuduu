@@ -10,12 +10,8 @@ import {
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import {
-  DEFAULT_SETTINGS,
-  INITIAL_TASKS,
-  SORT_MODES,
-  STORAGE_KEYS,
-} from '@/constants';
+import { DEFAULT_SETTINGS, SORT_MODES } from '@/constants';
+import { APP_INITIAL_TASKS, APP_STORAGE_KEYS } from '@/constants/appConfig';
 import { useClock } from '@/hooks/useClock';
 import { taskCheckedHaptic, taskDeletedHaptic } from '@/services/haptics';
 import {
@@ -205,12 +201,12 @@ export function useTasks(): UseTasksResult {
     async function load() {
       try {
         const [storedTasks, storedSettings, storedFocus, storedOnboarding] = await Promise.all([
-          AsyncStorage.getItem(STORAGE_KEYS.tasks),
-          AsyncStorage.getItem(STORAGE_KEYS.settings),
-          AsyncStorage.getItem(STORAGE_KEYS.focus),
-          AsyncStorage.getItem(STORAGE_KEYS.onboarding),
+          AsyncStorage.getItem(APP_STORAGE_KEYS.tasks),
+          AsyncStorage.getItem(APP_STORAGE_KEYS.settings),
+          AsyncStorage.getItem(APP_STORAGE_KEYS.focus),
+          AsyncStorage.getItem(APP_STORAGE_KEYS.onboarding),
         ]);
-        const loadedTasks = parseTasks(storedTasks) ?? INITIAL_TASKS.map(normalizeTask);
+        const loadedTasks = parseTasks(storedTasks) ?? APP_INITIAL_TASKS.map(normalizeTask);
         if (!active) return;
         setTasks(loadedTasks);
         setSettings(parseSettings(storedSettings));
@@ -218,11 +214,11 @@ export function useTasks(): UseTasksResult {
         setShowOnboarding(storedOnboarding !== 'done');
         setIsFirstLaunchOnboarding(storedOnboarding !== 'done');
         if (storedTasks === null) {
-          void AsyncStorage.setItem(STORAGE_KEYS.tasks, JSON.stringify(loadedTasks)).catch(() => {});
+          void AsyncStorage.setItem(APP_STORAGE_KEYS.tasks, JSON.stringify(loadedTasks)).catch(() => {});
         }
       } catch {
         if (!active) return;
-        setTasks(INITIAL_TASKS.map(normalizeTask));
+        setTasks(APP_INITIAL_TASKS.map(normalizeTask));
         setSettings(DEFAULT_SETTINGS);
         setShowOnboarding(true);
         setIsFirstLaunchOnboarding(true);
@@ -238,20 +234,20 @@ export function useTasks(): UseTasksResult {
 
   useEffect(() => {
     if (!isLoaded) return;
-    void AsyncStorage.setItem(STORAGE_KEYS.tasks, JSON.stringify(tasks)).catch(() => {});
+    void AsyncStorage.setItem(APP_STORAGE_KEYS.tasks, JSON.stringify(tasks)).catch(() => {});
   }, [isLoaded, tasks]);
 
   useEffect(() => {
     if (!isLoaded) return;
-    void AsyncStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(settings)).catch(() => {});
+    void AsyncStorage.setItem(APP_STORAGE_KEYS.settings, JSON.stringify(settings)).catch(() => {});
   }, [isLoaded, settings]);
 
   useEffect(() => {
     if (!isLoaded) return;
     if (focus) {
-      void AsyncStorage.setItem(STORAGE_KEYS.focus, JSON.stringify(focus)).catch(() => {});
+      void AsyncStorage.setItem(APP_STORAGE_KEYS.focus, JSON.stringify(focus)).catch(() => {});
     } else {
-      void AsyncStorage.removeItem(STORAGE_KEYS.focus).catch(() => {});
+      void AsyncStorage.removeItem(APP_STORAGE_KEYS.focus).catch(() => {});
     }
   }, [focus, isLoaded]);
 
@@ -525,7 +521,7 @@ export function useTasks(): UseTasksResult {
       void cancelTaskReminders(task).catch(() => {});
     });
     reminderSignatures.current = {};
-    setTasks(INITIAL_TASKS.map(normalizeTask));
+    setTasks(APP_INITIAL_TASKS.map(normalizeTask));
     setShowSettings(false);
   }, [tasks]);
 
@@ -534,7 +530,7 @@ export function useTasks(): UseTasksResult {
       setShowOnboarding(false);
       return;
     }
-    void AsyncStorage.setItem(STORAGE_KEYS.onboarding, 'done')
+    void AsyncStorage.setItem(APP_STORAGE_KEYS.onboarding, 'done')
       .catch(() => {})
       .finally(() => {
         setIsFirstLaunchOnboarding(false);
@@ -551,7 +547,7 @@ export function useTasks(): UseTasksResult {
   const resetOnboardingForDev = useCallback(() => {
     if (!__DEV__) return;
     setShowSettings(false);
-    void AsyncStorage.removeItem(STORAGE_KEYS.onboarding)
+    void AsyncStorage.removeItem(APP_STORAGE_KEYS.onboarding)
       .catch(() => {})
       .finally(() => {
         setIsFirstLaunchOnboarding(true);

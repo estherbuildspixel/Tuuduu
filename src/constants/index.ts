@@ -14,6 +14,13 @@ export const STORAGE_KEYS = {
   onboarding: '@tuuduu_onboarding_v1',
 } as const;
 
+export const WEB_DEMO_STORAGE_KEYS = {
+  tasks: '@tuuduu_demo_tasks_v1',
+  settings: '@tuuduu_demo_settings_v1',
+  focus: '@tuuduu_demo_focus_v1',
+  onboarding: '@tuuduu_demo_onboarding_v1',
+} as const;
+
 export const CATEGORIES: readonly Category[] = [
   { id: 'general', label: 'General', color: '#6366F1', icon: 'apps-outline' },
   { id: 'work', label: 'Work', color: '#8B5CF6', icon: 'briefcase-outline' },
