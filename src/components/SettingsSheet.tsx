@@ -16,8 +16,6 @@ interface SettingsSheetProps {
   settings: AppSettings;
   setSettings: React.Dispatch<React.SetStateAction<AppSettings>>;
   onEnableReminders: () => void;
-  onOpenOnboarding: () => void;
-  onResetOnboardingForDev?: () => void;
   onResetData: () => void;
   onClose: () => void;
   theme: ThemePalette;
@@ -28,8 +26,6 @@ function SettingsSheet({
   settings,
   setSettings,
   onEnableReminders,
-  onOpenOnboarding,
-  onResetOnboardingForDev,
   onResetData,
   onClose,
   theme,
@@ -71,30 +67,6 @@ function SettingsSheet({
               <Ionicons name="information-circle-outline" size={17} color={theme.warning} />
               <Text style={styles.infoText}>Enable exact alarms for precise timing</Text>
               <Ionicons name="chevron-forward" size={16} color={theme.warning} />
-            </TouchableOpacity>
-          )}
-
-          <TouchableOpacity style={styles.settingRow} onPress={onOpenOnboarding}>
-            <View style={styles.settingIcon}>
-              <Ionicons name="book-outline" size={18} color={theme.textSub} />
-            </View>
-            <View style={styles.settingCopy}>
-              <Text style={styles.settingTitle}>How to use Tuuduu</Text>
-              <Text style={styles.settingSubtitle}>Replay the quick guide</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={17} color={theme.textMuted} />
-          </TouchableOpacity>
-
-          {__DEV__ && !!onResetOnboardingForDev && (
-            <TouchableOpacity style={styles.settingRow} onPress={onResetOnboardingForDev}>
-              <View style={styles.settingIcon}>
-                <Ionicons name="refresh-outline" size={18} color={theme.warning} />
-              </View>
-              <View style={styles.settingCopy}>
-                <Text style={styles.settingTitle}>Preview onboarding (dev)</Text>
-                <Text style={styles.settingSubtitle}>Clears only the onboarding flag</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={17} color={theme.textMuted} />
             </TouchableOpacity>
           )}
 

@@ -152,8 +152,6 @@ export interface UseTasksResult {
   enableReminders: () => Promise<void>;
   resetData: () => void;
   finishOnboarding: () => void;
-  openOnboarding: () => void;
-  resetOnboardingForDev: () => void;
   startFocus: (task: Task) => void;
   toggleFocusPause: () => void;
   stopFocus: () => void;
@@ -544,23 +542,6 @@ export function useTasks(): UseTasksResult {
       });
   }, [isFirstLaunchOnboarding]);
 
-  const openOnboarding = useCallback(() => {
-    setShowSettings(false);
-    setIsFirstLaunchOnboarding(false);
-    setShowOnboarding(true);
-  }, []);
-
-  const resetOnboardingForDev = useCallback(() => {
-    if (!__DEV__) return;
-    setShowSettings(false);
-    void AsyncStorage.removeItem(APP_STORAGE_KEYS.onboarding)
-      .catch(() => {})
-      .finally(() => {
-        setIsFirstLaunchOnboarding(true);
-        setShowOnboarding(true);
-      });
-  }, []);
-
   const toggleFocusPause = useCallback(() => {
     if (!focus) return;
     const task = tasks.find((item) => item.id === focus.taskId);
@@ -640,8 +621,6 @@ export function useTasks(): UseTasksResult {
     enableReminders,
     resetData,
     finishOnboarding,
-    openOnboarding,
-    resetOnboardingForDev,
     startFocus,
     toggleFocusPause,
     stopFocus,

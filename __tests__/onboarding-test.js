@@ -86,7 +86,6 @@ const freshState = () => [
 
 const showOnboardingSetter = () => React.__setters[16];
 const firstLaunchSetter = () => React.__setters[17];
-const showSettingsSetter = () => React.__setters[13];
 const isLoadedSetter = () => React.__setters[3];
 
 const mockStorage = (values = {}) => {
@@ -103,7 +102,6 @@ beforeEach(() => {
   React.__setStateValues(freshState());
   mockStorage();
   AsyncStorage.setItem.mockResolvedValue(undefined);
-  global.__DEV__ = true;
 });
 
 describe('onboarding persistence', () => {
@@ -186,19 +184,6 @@ describe('onboarding persistence', () => {
     expect(showOnboardingSetter()).toHaveBeenCalledWith(false);
   });
 
-  test('finishing the Settings guide does not persist onboarding completion', async () => {
-    const { openOnboarding, finishOnboarding } = useTasks();
-
-    openOnboarding();
-    finishOnboarding();
-    await flushEffects();
-
-    expect(showOnboardingSetter()).toHaveBeenCalledWith(true);
-    expect(firstLaunchSetter()).toHaveBeenCalledWith(false);
-    expect(AsyncStorage.setItem).not.toHaveBeenCalledWith(STORAGE_KEYS.onboarding, 'done');
-    expect(showOnboardingSetter()).toHaveBeenCalledWith(false);
-  });
-
   test('does not block the loaded state on the unrelated initial task write', async () => {
     let releaseTaskWrite;
     AsyncStorage.setItem.mockImplementation(
@@ -224,30 +209,4 @@ describe('onboarding persistence', () => {
     expect(isLoadedSetter()).toHaveBeenCalledWith(true);
   });
 
-  test('dev reset clears only the onboarding flag and reopens onboarding', async () => {
-    const { resetOnboardingForDev } = useTasks();
-
-    resetOnboardingForDev();
-    await flushEffects();
-
-    expect(AsyncStorage.removeItem).toHaveBeenCalledWith(STORAGE_KEYS.onboarding);
-    expect(AsyncStorage.removeItem).toHaveBeenCalledTimes(1);
-    expect(AsyncStorage.clear).not.toHaveBeenCalled();
-    expect(AsyncStorage.setItem).not.toHaveBeenCalled();
-    expect(showSettingsSetter()).toHaveBeenCalledWith(false);
-    expect(showOnboardingSetter()).toHaveBeenCalledWith(true);
-    expect(firstLaunchSetter()).toHaveBeenCalledWith(true);
-  });
-
-  test('dev reset is unavailable in production builds', async () => {
-    global.__DEV__ = false;
-    const { resetOnboardingForDev } = useTasks();
-
-    resetOnboardingForDev();
-    await flushEffects();
-
-    expect(AsyncStorage.removeItem).not.toHaveBeenCalled();
-    expect(showOnboardingSetter()).not.toHaveBeenCalled();
-    expect(firstLaunchSetter()).not.toHaveBeenCalled();
-  });
 });

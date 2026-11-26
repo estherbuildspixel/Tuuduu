@@ -71,8 +71,6 @@ function TuuduuApp() {
     enableReminders,
     resetData,
     finishOnboarding,
-    openOnboarding,
-    resetOnboardingForDev,
     startFocus,
     toggleFocusPause,
     stopFocus,
@@ -238,8 +236,6 @@ function TuuduuApp() {
             settings={settings}
             setSettings={setSettings}
             onEnableReminders={() => void enableReminders()}
-            onOpenOnboarding={openOnboarding}
-            onResetOnboardingForDev={resetOnboardingForDev}
             onResetData={confirmResetData}
             onClose={() => setShowSettings(false)}
             theme={theme}
