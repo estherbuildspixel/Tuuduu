@@ -53,8 +53,6 @@ function ProgressCard({
 
   return (
     <View style={styles.progressCard}>
-      <View style={[styles.glow, styles.glowOne, { backgroundColor: `${theme.primary}14` }]} />
-      <View style={[styles.glow, styles.glowTwo, { backgroundColor: `${theme.success}12` }]} />
       <View style={styles.progressContent}>
         <View style={styles.progressTop}>
           <View style={styles.progressHeading}>

@@ -37,8 +37,8 @@ function EmptyState({ filter, query, styles, theme, onReset }: EmptyStateProps) 
 
   return (
     <View style={styles.emptyContainer}>
-      <View style={[styles.emptyIconWrap, { backgroundColor: theme.primarySoft }]}>
-        <Ionicons name={icon} size={30} color={theme.primary} />
+      <View style={styles.emptyIconWrap}>
+        <Ionicons name={icon} size={28} color={theme.textMuted} />
       </View>
       <Text style={styles.emptyTitle}>{title}</Text>
       <Text style={styles.emptySubtitle}>{subtitle}</Text>

@@ -52,7 +52,7 @@ function SettingsSheet({
         <View style={styles.settingsBody}>
           <View style={styles.settingRow}>
             <View style={styles.settingIcon}>
-              <Ionicons name="notifications-outline" size={19} color={theme.primary} />
+              <Ionicons name="notifications-outline" size={18} color={theme.textSub} />
             </View>
             <View style={styles.settingCopy}>
               <Text style={styles.settingTitle}>Task reminders</Text>
@@ -76,7 +76,7 @@ function SettingsSheet({
 
           <TouchableOpacity style={styles.settingRow} onPress={onOpenOnboarding}>
             <View style={styles.settingIcon}>
-              <Ionicons name="book-outline" size={19} color={theme.primary} />
+              <Ionicons name="book-outline" size={18} color={theme.textSub} />
             </View>
             <View style={styles.settingCopy}>
               <Text style={styles.settingTitle}>How to use Tuuduu</Text>
@@ -87,8 +87,8 @@ function SettingsSheet({
 
           {__DEV__ && !!onResetOnboardingForDev && (
             <TouchableOpacity style={styles.settingRow} onPress={onResetOnboardingForDev}>
-              <View style={[styles.settingIcon, { backgroundColor: `${theme.warning}1F` }]}>
-                <Ionicons name="refresh-outline" size={19} color={theme.warning} />
+              <View style={styles.settingIcon}>
+                <Ionicons name="refresh-outline" size={18} color={theme.warning} />
               </View>
               <View style={styles.settingCopy}>
                 <Text style={styles.settingTitle}>Preview onboarding (dev)</Text>
@@ -135,8 +135,8 @@ function SettingsSheet({
 
           <View style={styles.sectionDivider} />
           <TouchableOpacity style={styles.settingRow} onPress={onResetData}>
-            <View style={[styles.settingIcon, { backgroundColor: `${theme.danger}1F` }]}>
-              <Ionicons name="refresh-outline" size={19} color={theme.danger} />
+            <View style={styles.settingIcon}>
+              <Ionicons name="refresh-outline" size={18} color={theme.danger} />
             </View>
             <View style={styles.settingCopy}>
               <Text style={[styles.settingTitle, { color: theme.danger }]}>Reset sample data</Text>

@@ -129,6 +129,22 @@ describe('onboarding persistence', () => {
     expect(firstLaunchSetter()).toHaveBeenCalledWith(false);
   });
 
+  test('skips welcome for a returning user who has tasks but no completion flag', async () => {
+    mockStorage({
+      [STORAGE_KEYS.tasks]: JSON.stringify([
+        { id: 'saved-task', text: 'Keep me', completed: false, createdAt: 1 },
+      ]),
+    });
+    useTasks();
+
+    React.__effects[1]();
+    await flushEffects();
+
+    expect(showOnboardingSetter()).toHaveBeenCalledWith(false);
+    expect(firstLaunchSetter()).toHaveBeenCalledWith(false);
+    expect(AsyncStorage.setItem).toHaveBeenCalledWith(STORAGE_KEYS.onboarding, 'done');
+  });
+
   test('regression: first launch gates the home screen while returning users skip it', async () => {
     useTasks();
     React.__effects[1]();

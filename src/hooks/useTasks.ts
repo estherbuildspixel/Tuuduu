@@ -207,12 +207,18 @@ export function useTasks(): UseTasksResult {
           AsyncStorage.getItem(APP_STORAGE_KEYS.onboarding),
         ]);
         const loadedTasks = parseTasks(storedTasks) ?? APP_INITIAL_TASKS.map(normalizeTask);
+        const hasExistingData =
+          storedTasks !== null || storedSettings !== null || storedFocus !== null;
+        const shouldShowOnboarding = storedOnboarding !== 'done' && !hasExistingData;
         if (!active) return;
         setTasks(loadedTasks);
         setSettings(parseSettings(storedSettings));
         setFocus(parseFocus(storedFocus));
-        setShowOnboarding(storedOnboarding !== 'done');
-        setIsFirstLaunchOnboarding(storedOnboarding !== 'done');
+        setShowOnboarding(shouldShowOnboarding);
+        setIsFirstLaunchOnboarding(shouldShowOnboarding);
+        if (storedOnboarding !== 'done' && hasExistingData) {
+          void AsyncStorage.setItem(APP_STORAGE_KEYS.onboarding, 'done').catch(() => {});
+        }
         if (storedTasks === null) {
           void AsyncStorage.setItem(APP_STORAGE_KEYS.tasks, JSON.stringify(loadedTasks)).catch(() => {});
         }

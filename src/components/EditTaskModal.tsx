@@ -304,7 +304,7 @@ function EditTaskModal({
               placeholderTextColor={theme.textMuted}
             />
             <TouchableOpacity style={styles.smallAddButton} onPress={addSubtask}>
-              <Ionicons name="add" size={18} color="#FFFFFF" />
+              <Ionicons name="add" size={18} color={theme.onPrimary} />
             </TouchableOpacity>
           </View>
 

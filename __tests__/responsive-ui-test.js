@@ -200,18 +200,27 @@ describe('responsive interaction styles', () => {
     expect(collectNodes(tree, TextInput).some((node) => node.props.autoFocus)).toBe(false);
   });
 
-  test('compact onboarding uses tighter spacing but keeps 48 dp navigation buttons', () => {
+  test('welcome screen centers mobile copy and animates without a button', () => {
     global.__responsiveDimensions = { width: 320, height: 640 };
     const tree = OnboardingFlow({ theme, onFinish: jest.fn() });
     const scroll = collectNodes(tree, ScrollView)[0];
-    const buttons = collectNodes(tree, TouchableOpacity);
-    const skip = buttons.find((node) => node.props.accessibilityLabel === 'Skip onboarding');
-    const next = buttons.find((node) => textContent(node.props.children).includes('Next'));
+    const texts = collectNodes(tree, Text);
+    const title = texts.find((node) => textContent(node.props.children) === 'Welcome');
+    const body = texts.find((node) =>
+      textContent(node.props.children).includes('Tuuduu keeps your tasks')
+    );
+    const welcomeText = texts.map((node) => textContent(node.props.children)).join(' ');
 
-    expect(scroll.props.contentContainerStyle.paddingHorizontal).toBe(14);
-    expect(skip.props.style.minHeight).toBeGreaterThanOrEqual(44);
-    expect(next.props.style[0].minHeight).toBeGreaterThanOrEqual(48);
-    expect(collectNodes(tree, Animated.View)).toHaveLength(1);
+    expect(scroll.props.contentContainerStyle.paddingHorizontal).toBe(24);
+    expect(collectNodes(tree, TouchableOpacity)).toHaveLength(0);
+    expect(collectNodes(tree, Animated.View)).toHaveLength(2);
+    expect(title.props.style.textAlign).toBe('center');
+    expect(title.props.style.fontSize).toBeLessThanOrEqual(32);
+    expect(body.props.style.textAlign).toBe('center');
+    expect(body.props.style.fontSize).toBeLessThanOrEqual(16);
+    expect(welcomeText).toContain('Welcome');
+    expect(welcomeText).toContain('Tuuduu keeps your tasks');
+    expect(welcomeText).not.toContain('Get started');
   });
 
   test('shared theme keeps filters, sheets, and sheet controls touch-friendly', () => {

@@ -48,7 +48,7 @@ function StatsSheet({ tasks, streak, nowTs, onClose, theme, styles }: StatsSheet
           <View style={styles.statGrid}>
             {stats.map((stat) => (
               <View key={stat.label} style={styles.statCard}>
-                <Ionicons name={stat.icon} size={18} color={theme.primary} />
+                <Ionicons name={stat.icon} size={18} color={theme.textMuted} />
                 <Text style={styles.statValue}>{stat.value}</Text>
                 <Text style={styles.statLabel}>{stat.label}</Text>
               </View>
